@@ -34,11 +34,9 @@ namespace Minecraft
 
         private void theout1(object source, System.Timers.ElapsedEventArgs e)
         {
-            string cmd = related_functions.CMD.RunCmd("tasklist /APPS");
+            string[] str = related_functions.CMD.RunCmd("tasklist /APPS").Split('\n');//获得返回信息
 
-            string[] str = cmd.Split('\n');
-
-            string str2 = "";
+            string str2 = "";//存储有效结果
 
             for (int i = 0; i < str.Length; i++)
             {
@@ -47,15 +45,18 @@ namespace Minecraft
                     str2 = str[i];
                 }
             }
-            if (str2 != "")
+
+            if (str2 != "")//在有结果的情况下
             {
-                Thread.Sleep(5000);
+                t1.Stop();//暂停计时器
+                Thread.Sleep(10000);//检测到进程后延时10秒...
+                //执行taskkill命令结束进程
                 related_functions.CMD.RunCmd("taskkill /pid " + related_functions.Intercept.Substring(str2, "   ", "   ").Trim() + " /f");
+                
                 Dispatcher.Invoke(new Action(delegate
-                {
-                    日志.Text += "[" + DateTime.Now.ToString() + "]: 启动完成！！！\n";
-                    t1.Stop();
-                    t1.Close();
+                {//同步线程更新状态
+                    日志.Text += "[" + DateTime.Now.ToString() + "]: 启动完成！！！\n\n\n";
+                    t1.Close();//释放计时器
                 }));
             }
         }
@@ -105,31 +106,27 @@ namespace Minecraft
 
         private void 关闭_Click(object sender, RoutedEventArgs e)
         {
-            日志.Text += "[" + DateTime.Now.ToString() + "]: 读取嵌入文件字节组\n";
+            主窗体.Visibility = Visibility.Collapsed;//隐藏主窗体
+
             byte[] byDll = Encoding.Default.GetBytes(Properties.Resources.MC_OFF);//获取嵌入文件的字节数组  
-            日志.Text += "[" + DateTime.Now.ToString() + "]: 设置释放文件路径：" + Environment.GetEnvironmentVariable("TMP") + @"\MC_OFF.reg" + "\n";
+
             string strPath = Environment.GetEnvironmentVariable("TMP") + @"\MC_OFF.reg";//设置释放路径
 
-            日志.Text += "[" + DateTime.Now.ToString() + "]: 写入文件流...\n";
             using (FileStream fs = new FileStream(strPath, FileMode.Create))//开始写入文件流
             {
                 fs.Write(byDll, 0, byDll.Length);
             }
 
-            日志.Text += "[" + DateTime.Now.ToString() + "]: 写入注册表...\n";
-            //导入注册表
+            //恢复注册表
             related_functions.Import_function.ExecuteReg(Environment.GetEnvironmentVariable("TMP") + @"\MC_OFF.reg");
 
-            日志.Text += "[" + DateTime.Now.ToString() + "]: 恢复ClipSVC服务...\n";
             //恢复ClipSVC服务
             related_functions.CMD.RunCmd("net start ClipSVC");
 
-            日志.Text += "[" + DateTime.Now.ToString() + "]: 删除临时文件...\n";
             //删除临时文件
             File.Delete(Environment.GetEnvironmentVariable("TMP") + @"\MC_OFF.reg");
 
-            日志.Text += "[" + DateTime.Now.ToString() + "]: 启动结束...\n\n\n";
-            //启动结束...
+            //关闭进程
             Environment.Exit(0);
         }
 

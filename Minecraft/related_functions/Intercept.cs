@@ -8,7 +8,13 @@ namespace Minecraft.related_functions
 {
     class Intercept
     {
-        //截取字符串--目标--从这里--到这里
+        /// <summary>
+        /// 截取字符串
+        /// </summary>
+        /// <param name="sourse">目标</param>
+        /// <param name="startstr">从这里</param>
+        /// <param name="endstr">到这里</param>
+        /// <returns>返回不包含"从这里","到这里"的字符串</returns>
         public static string Substring(string sourse, string startstr, string endstr)
         {
             string result = string.Empty;

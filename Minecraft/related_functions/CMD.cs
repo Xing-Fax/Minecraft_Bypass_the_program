@@ -13,10 +13,9 @@ namespace Minecraft.related_functions
         /// 执行cmd命令，返回执行结果
         /// </summary>
         /// <param name="command">命令内容</param>
-        /// <returns></returns>
+        /// <returns>返回执行结果字符串</returns>
         public static string RunCmd(string command)
         {
-            //例Process
             Process p = new Process();
             p.StartInfo.FileName = "cmd.exe";         //确定程序名
             p.StartInfo.Arguments = "/c " + command;   //确定程式命令行
