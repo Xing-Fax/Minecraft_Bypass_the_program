@@ -20,6 +20,7 @@
             <TextBox x:Name="日志" HorizontalAlignment="Left" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" FontFamily="Microsoft YaHei UI" MinWidth="258" MinHeight="195" BorderBrush="{x:Null}"/>
         </ScrollViewer>
         <Rectangle HorizontalAlignment="Left" Height="195" Margin="10,85,0,0" Stroke="#FF8F8F8F" VerticalAlignment="Top" Width="275"/>
-        <Label Content="Minecraft" HorizontalAlignment="Left" Height="22.75" Margin="10,0,0,0" VerticalAlignment="Top" Width="70" FontFamily="Microsoft YaHei UI"/>
+        <Label Content="Minecraft" HorizontalAlignment="Left" Height="22.75" Margin="5,0,0,0" VerticalAlignment="Top" Width="70" FontFamily="Microsoft YaHei UI"/>
+        <Label Content="Copyright © xcz  2021" HorizontalAlignment="Left" Height="25" Margin="145,60,0,0" VerticalAlignment="Top" Width="140" FontFamily="Microsoft YaHei UI" MouseUp="Label_MouseUp"/>
     </Grid>
 </Window>

@@ -107,25 +107,18 @@ namespace Minecraft
         private void 关闭_Click(object sender, RoutedEventArgs e)
         {
             主窗体.Visibility = Visibility.Collapsed;//隐藏主窗体
-
             byte[] byDll = Encoding.Default.GetBytes(Properties.Resources.MC_OFF);//获取嵌入文件的字节数组  
-
             string strPath = Environment.GetEnvironmentVariable("TMP") + @"\MC_OFF.reg";//设置释放路径
-
             using (FileStream fs = new FileStream(strPath, FileMode.Create))//开始写入文件流
             {
                 fs.Write(byDll, 0, byDll.Length);
             }
-
             //恢复注册表
             related_functions.Import_function.ExecuteReg(Environment.GetEnvironmentVariable("TMP") + @"\MC_OFF.reg");
-
             //恢复ClipSVC服务
             related_functions.CMD.RunCmd("net start ClipSVC");
-
             //删除临时文件
             File.Delete(Environment.GetEnvironmentVariable("TMP") + @"\MC_OFF.reg");
-
             //关闭进程
             Environment.Exit(0);
         }
@@ -134,6 +127,11 @@ namespace Minecraft
         {
             日志.Text += "[" + DateTime.Now.ToString() + "]: 最小化程序...\n";
             主窗体.WindowState = WindowState.Minimized;
+        }
+
+        private void Label_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            Process.Start("https://github.com/xingchuanzhen/Minecraft_Bypass_the_program");
         }
     }
 }
