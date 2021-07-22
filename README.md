@@ -1,5 +1,5 @@
-# Minecraft_Bypass_the_program
-绕过Windows10我的世界UWP验证系统
+# Minecraft for Windows 10 Bypass the program
+绕过Minecraft for Windows 10我的世界UWP验证系统
 
 使用方法:
 
