@@ -84,6 +84,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="related_functions\CMD.cs" />
+    <Compile Include="related_functions\Fingerprint_verification.cs" />
     <Compile Include="related_functions\Import_function.cs" />
     <Compile Include="related_functions\Intercept.cs" />
     <Page Include="MainWindow.xaml">

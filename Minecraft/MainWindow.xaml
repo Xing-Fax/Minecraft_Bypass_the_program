@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Minecraft"
         mc:Ignorable="d"
-        Title="MainWindow" Height="290" Width="295" AllowsTransparency="True" WindowStyle="None" Background="{x:Null}" Topmost="True" Icon="256x256.ico">
+        Title="MainWindow" Height="290" Width="295" AllowsTransparency="True" WindowStyle="None" Background="{x:Null}" Topmost="True" Icon="256x256.ico" SnapsToDevicePixels="True">
     <Grid Background="White" Clip="M0.5,5.5 C0.5,2.7385763 2.7385763,0.5 5.5,0.5 L289.5,0.5 C292.26142,0.5 294.5,2.7385763 294.5,5.5 L294.5,284.5 C294.5,287.26142 292.26142,289.5 289.5,289.5 L5.5,289.5 C2.7385763,289.5 0.5,287.26142 0.5,284.5 z">
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -20,7 +20,7 @@
             <TextBox x:Name="日志" HorizontalAlignment="Left" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" FontFamily="Microsoft YaHei UI" MinWidth="258" MinHeight="195" BorderBrush="{x:Null}"/>
         </ScrollViewer>
         <Rectangle HorizontalAlignment="Left" Height="195" Margin="10,85,0,0" Stroke="#FF8F8F8F" VerticalAlignment="Top" Width="275"/>
-        <Label Content="Minecraft" HorizontalAlignment="Left" Height="22.75" Margin="5,0,0,0" VerticalAlignment="Top" Width="70" FontFamily="Microsoft YaHei UI"/>
+        <Label Content="Minecraft" HorizontalAlignment="Left" Height="22.75" Margin="5,0,0,0" VerticalAlignment="Top" Width="65" FontFamily="Microsoft YaHei UI"/>
         <Label Content="Copyright © xcz  2021" HorizontalAlignment="Left" Height="25" Margin="145,60,0,0" VerticalAlignment="Top" Width="140" FontFamily="Microsoft YaHei UI" MouseUp="Label_MouseUp"/>
     </Grid>
 </Window>
