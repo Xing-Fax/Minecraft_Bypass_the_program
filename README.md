@@ -32,6 +32,21 @@
 
 蓝奏云：https://wwe.lanzoui.com/iZBv9rx51ne
 
-MD5: D14D9E9705DBC7153A03CDB525805098
+文件名称：       Minecraft start up.exe
+
+文件大小：       438464 字节
+
+文件版本：       1.0.0.0
+
+修改日期：       2021/7/29 15:26:11
+
+CRC32值：      1B03D630
+
+MD5值：         C3D08B908385FAEB0B21C1C870FD2B03
+
+RIPEMD-160：985E11970BB15222EB9D19942030B6FBBB2DA268
+
+SHA1值：        01FAECD195F41C2385F6BBE6766E7E200B4976EB
+
 
 本程序仅供学习交流，严禁商用或其他方法用途，请于下载后的24小时内自觉删除文件
