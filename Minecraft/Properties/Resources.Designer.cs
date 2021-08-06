@@ -97,5 +97,15 @@ namespace Minecraft.Properties {
                 return ResourceManager.GetString("MC_ON", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   查找类似于 (图标) 的 System.Drawing.Icon 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Icon 图标 {
+            get {
+                object obj = ResourceManager.GetObject("图标", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
     }
 }

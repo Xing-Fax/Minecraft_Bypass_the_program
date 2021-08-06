@@ -18,6 +18,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using System.Windows.Forms;
+using System.Drawing;
+
+
 
 namespace Minecraft
 {
@@ -28,7 +32,7 @@ namespace Minecraft
     public partial class MainWindow : Window
     {
         //拖动窗体
-        private void Rectangle_MouseMove(object sender, MouseEventArgs e)
+        private void Rectangle_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed) { DragMove(); }
         }
@@ -47,6 +51,21 @@ namespace Minecraft
                 //使用taskkill命令结束获取到的PID进程
                 related_functions.CMD.RunCmd("taskkill /pid " + PID + " /f");
             }
+
+            result = "";
+            Process[] processList = Process.GetProcesses();
+            foreach (Process process in processList)
+            {
+                result += process.ProcessName;
+            }
+            //检测游戏退出后自动关闭主程序
+            if (!result.Contains("Minecraft.Windows"))
+            {
+                Dispatcher.Invoke(new Action(delegate
+                {
+                    关闭_Click(null, null);
+                }));
+            }
         }
 
         //Microsoft启动时会使用RuntimeBroker.exe进程来通过ClipSVC服务来检测应用许可证状态
@@ -59,7 +78,6 @@ namespace Minecraft
             if (result != "0")//在截取到结果后
             {
                 t1.Stop();//暂停计时器
-                Thread.Sleep(10000);//检测到进程后延时10秒...作用是等待程序加载到64%
 
                 //"RuntimeBroker.exe (runtimebroker07f4358a809ac99a64a67c1)","11680","21,608 K","Microsoft.MinecraftUWP_1.17.1004.0_x64__8wekyb3d8bbwe"
                 //获得数据后，从其中分离出PID，11680即为RuntimeBroker.exe的PID
@@ -73,32 +91,58 @@ namespace Minecraft
                 {   
                     日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: PID = " + related_functions.Intercept.Substring(result, "\",\"", "\",\"") + "\n";
                     日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: 启动完成！！！\n";
+                    fyIcon.BalloonTipText = "启动完毕！";
+                    fyIcon.ShowBalloonTip(0);
                     t1.Dispose();
                     t1.Close();//释放计时器
+                    主窗体.Visibility = Visibility.Collapsed;
                 }));
-
                 t2.Start();//启动计时器
             }
         }
 
         /// <summary>
-        /// 初始化Timer类，用于扫描进程PID并结束，单位间隔：15000毫秒
+        /// 初始化Timer类，用于扫描进程PID并结束，单位间隔：28秒
         /// </summary>
-        System.Timers.Timer t1 = new System.Timers.Timer(15000);
+        System.Timers.Timer t1 = new System.Timers.Timer(28000);
         /// <summary>
         /// 初始化Timer类，用于定时扫描进程"RuntimeBroker.exe"并结束，单位间隔：10秒
         /// </summary>
         System.Timers.Timer t2 = new System.Timers.Timer(10000);
+        /// <summary>
+        /// Windows10原生Toast通知
+        /// </summary>
+        NotifyIcon fyIcon = new NotifyIcon();
+
+        private void OnNotifyIconDoubleClick(object sender, EventArgs e)
+        {
+            if (主窗体.Visibility ==  Visibility.Collapsed )
+            {
+                主窗体.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                主窗体.Visibility = Visibility.Collapsed;
+            }
+        }
 
         public MainWindow()
         {
             InitializeComponent();
 
+            fyIcon.Icon = Properties.Resources.图标;
+            fyIcon.Visible = true;
+            fyIcon.Text = "正常运行";
+            fyIcon.BalloonTipTitle = "温馨提示";
+            fyIcon.Click += OnNotifyIconDoubleClick;
+
             //以下代码用作校验程序签名是否完整，调试时请将其注释
 
             if (related_functions.Fingerprint_verification.Document_verification() != true)
             {
-                MessageBox.Show("签名校验失败,程序可能被篡改,轻击确定以退出程序", "警告");
+                fyIcon.BalloonTipText = "程序签名指纹校验失败！已关闭此程序。";
+                fyIcon.ShowBalloonTip(0);
+                fyIcon.Dispose();
                 Environment.Exit(0);
             }
 
@@ -121,39 +165,54 @@ namespace Minecraft
         //并启动计时器，来后台监测与Microsoft关联的RuntimeBroker进程
         private void 启动_Click(object sender, RoutedEventArgs e)
         {
-            日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: 读取嵌入文件字节组\n";
-            byte[] byDll = Encoding.Default.GetBytes(Properties.Resources.MC_ON);//获取嵌入文件的字节数组  
-            日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: 开始释放内嵌注册表文件\n";
-            string strPath = Environment.GetEnvironmentVariable("TMP") + @"\MC_ON.reg";//设置释放路径
-
-            日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: 写入文件流...\n";
-            using (FileStream fs = new FileStream(strPath, FileMode.Create))//开始写入文件流
+            //检测系统中是否安装MinecraftUWP
+            string DIR = @"CD C:\Program Files\WindowsApps & C: & DIR";
+            string UWP = related_functions.CMD.RunCmd(DIR);//列出已经安装的UWP程序
+            if (UWP.Contains("Microsoft.MinecraftUWP"))
             {
-                fs.Write(byDll, 0, byDll.Length);
+
+                日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: 读取嵌入文件字节组\n";
+                byte[] byDll = Encoding.Default.GetBytes(Properties.Resources.MC_ON);//获取嵌入文件的字节数组  
+                日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: 开始释放内嵌注册表文件\n";
+                string strPath = Environment.GetEnvironmentVariable("TMP") + @"\MC_ON.reg";//设置释放路径
+
+                日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: 写入文件流...\n";
+                using (FileStream fs = new FileStream(strPath, FileMode.Create))//开始写入文件流
+                {
+                    fs.Write(byDll, 0, byDll.Length);
+                }
+
+                日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: 写入注册表...\n";
+                //导入注册表
+                related_functions.Import_function.ExecuteReg(Environment.GetEnvironmentVariable("TMP") + @"\MC_ON.reg");
+
+                日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: 禁用 ClipSVC 服务...\n";
+                //禁用ClipSVC服务
+                related_functions.CMD.RunCmd("net stop ClipSVC");
+
+                日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: 删除临时文件...\n";
+                //删除临时文件
+                File.Delete(Environment.GetEnvironmentVariable("TMP") + @"\MC_ON.reg");
+
+                //启动游戏
+                日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: 调起 MinecraftUWP\n";
+
+                Process.Start("minecraft:");
+
+                t1.Start();
             }
-
-            日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: 写入注册表...\n";
-            //导入注册表
-            related_functions.Import_function.ExecuteReg(Environment.GetEnvironmentVariable("TMP") + @"\MC_ON.reg");
-
-            日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: 禁用 ClipSVC 服务...\n";
-            //禁用ClipSVC服务
-            related_functions.CMD.RunCmd("net stop ClipSVC");
-
-            日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: 删除临时文件...\n";
-            //删除临时文件
-            File.Delete(Environment.GetEnvironmentVariable("TMP") + @"\MC_ON.reg");
-
-            //提示用户启动游戏
-            日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: 您现在启动您的游戏...\n";
-            //启动结束...
-            t1.Start();
+            else
+            {
+                fyIcon.BalloonTipText = "您似乎还没有安装 MinecraftUWP";
+                fyIcon.ShowBalloonTip(0);
+            }
         }
 
         //导入原注册表并恢复ClipSVC服务的正常运行
         private void 关闭_Click(object sender, RoutedEventArgs e)
         {
-
+            fyIcon.BalloonTipText = "请稍后...";
+            fyIcon.ShowBalloonTip(0);
             主窗体.Visibility = Visibility.Collapsed;//隐藏主窗体
             byte[] byDll = Encoding.Default.GetBytes(Properties.Resources.MC_OFF);//获取嵌入文件的字节数组  
             string strPath = Environment.GetEnvironmentVariable("TMP") + @"\MC_OFF.reg";//设置释放路径
@@ -163,17 +222,23 @@ namespace Minecraft
             }
             //恢复注册表
             related_functions.Import_function.ExecuteReg(Environment.GetEnvironmentVariable("TMP") + @"\MC_OFF.reg");
+            Thread.Sleep(2000);//睡眠2秒
             //恢复ClipSVC服务
             related_functions.CMD.RunCmd("net start ClipSVC");
             //删除临时文件
             File.Delete(Environment.GetEnvironmentVariable("TMP") + @"\MC_OFF.reg");
+            //
+            fyIcon.BalloonTipText = "已成功关闭程序！";
+            fyIcon.ShowBalloonTip(0);
+            //删除通知栏图标
+            fyIcon.Dispose();
             //关闭进程
             Environment.Exit(0);
         }
 
         private void 最小化_Click(object sender, RoutedEventArgs e)
         {
-            主窗体.WindowState = WindowState.Minimized;
+            主窗体.Visibility = Visibility.Collapsed;
         }
 
         private void Label_MouseUp(object sender, MouseButtonEventArgs e)

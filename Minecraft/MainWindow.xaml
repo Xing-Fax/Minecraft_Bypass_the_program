@@ -5,17 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Minecraft"
         mc:Ignorable="d"
-        Title="MainWindow" Height="290" Width="295" AllowsTransparency="True" WindowStyle="None" Background="{x:Null}" Topmost="True" Icon="256x256.ico" SnapsToDevicePixels="True">
+        Title="Minecraft start up" Height="290" Width="295" AllowsTransparency="True" WindowStyle="None" Background="{x:Null}" Topmost="True" Icon="256x256.ico" SnapsToDevicePixels="True" ShowInTaskbar="False">
     <Grid Background="White" Clip="M0.5,5.5 C0.5,2.7385763 2.7385763,0.5 5.5,0.5 L289.5,0.5 C292.26142,0.5 294.5,2.7385763 294.5,5.5 L294.5,284.5 C294.5,287.26142 292.26142,289.5 289.5,289.5 L5.5,289.5 C2.7385763,289.5 0.5,287.26142 0.5,284.5 z">
         <Grid.RowDefinitions>
-            <RowDefinition/>
+            <RowDefinition Height="290"/>
         </Grid.RowDefinitions>
+        <Rectangle HorizontalAlignment="Left" Height="25" RadiusY="5" RadiusX="5" VerticalAlignment="Top" Width="295" MouseMove="Rectangle_MouseMove" StrokeThickness="0" Fill="#03FFFFFF"/>
         <Rectangle HorizontalAlignment="Left" Height="290" Stroke="Black" VerticalAlignment="Top" Width="295" RadiusX="5" RadiusY="5"/>
         <Button x:Name="启动" Content="启动程序" HorizontalAlignment="Left" Height="35" Margin="10,25,0,0" VerticalAlignment="Top" Width="85" FontFamily="Microsoft YaHei UI" FontSize="14" Click="启动_Click"/>
         <Button x:Name="关闭" Content="关闭程序" HorizontalAlignment="Left" Height="35" Margin="105,25,0,0" VerticalAlignment="Top" Width="85" FontFamily="Microsoft YaHei UI" FontSize="14" Click="关闭_Click"/>
-        <Button x:Name="最小化" Content="最小化" HorizontalAlignment="Left" Height="35" Margin="200,25,0,0" VerticalAlignment="Top" Width="85" FontFamily="Microsoft YaHei UI" FontSize="14" Click="最小化_Click"/>
+        <Button x:Name="最小化" Content="隐藏界面" HorizontalAlignment="Left" Height="35" Margin="200,25,0,0" VerticalAlignment="Top" Width="85" FontFamily="Microsoft YaHei UI" FontSize="14" Click="最小化_Click"/>
         <Label Content="运行日志：" HorizontalAlignment="Left" Height="25" Margin="10,60,0,0" VerticalAlignment="Top" Width="80" FontFamily="Microsoft YaHei UI"/>
-        <Rectangle HorizontalAlignment="Left" Height="25" RadiusY="5" RadiusX="5" VerticalAlignment="Top" Width="295" MouseMove="Rectangle_MouseMove" StrokeThickness="0" Fill="#03FFFFFF"/>
         <ScrollViewer HorizontalAlignment="Left" Height="195" VerticalAlignment="Top" Width="275" Margin="10,85,0,0" HorizontalScrollBarVisibility="Auto" Padding="0">
             <TextBox x:Name="日志" HorizontalAlignment="Left" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" FontFamily="Microsoft YaHei UI" MinWidth="258" MinHeight="195" BorderBrush="{x:Null}"/>
         </ScrollViewer>
