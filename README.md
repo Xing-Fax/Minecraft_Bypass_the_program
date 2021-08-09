@@ -68,4 +68,4 @@
 
 蓝奏云：https://wwe.lanzoui.com/b01ohqixa 密码:1kut
 
-本程序仅供学习交流，严禁商用或其他非法用途，请于下载后的24小时内自觉删除文件
+本程序遵循GPL ( GNU General Public License )开源许可协议，程序仅供学习交流，严禁商用或其他非法用途！
