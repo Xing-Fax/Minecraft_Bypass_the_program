@@ -85,7 +85,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="related_functions\Associated_process_scan.cs" />
     <Compile Include="related_functions\CMD.cs" />
     <Compile Include="related_functions\Fingerprint_verification.cs" />
     <Compile Include="related_functions\Import_function.cs" />

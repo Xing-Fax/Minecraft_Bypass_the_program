@@ -9,7 +9,6 @@ namespace Minecraft.related_functions
 {
     class CMD
     {
-        static Process p = new Process();
         /// <summary>
         /// 执行cmd命令，返回执行结果
         /// </summary>
@@ -17,6 +16,7 @@ namespace Minecraft.related_functions
         /// <returns>返回执行结果字符串</returns>
         public static string RunCmd(string command)
         {
+            Process p = new Process();
             p.StartInfo.FileName = "cmd.exe";         //确定程序名
             p.StartInfo.Arguments = "/c " + command;   //确定程式命令行
             p.StartInfo.UseShellExecute = false;      //Shell的使用

@@ -35,61 +35,54 @@ namespace Minecraft
             if (e.LeftButton == MouseButtonState.Pressed) { DragMove(); }
         }
 
-        //Microsoft会在检测许可证失败后的30分钟内重新检查
-        //Microsoft检测到RuntimeBroker.exe进程消失后的20秒内重新启动该进程
-        //所以为了防止第二次检查，每隔0.5秒扫描并结束一次"RuntimeBroker.exe"
-        //此操作可能会造成Microsoft无响应，在一次结束"RuntimeBroker.exe"时Microsoft会恢复响应
+        /*Microsoft会在检测许可证失败后的30分钟内重新检查
+        Microsoft检测到RuntimeBroker.exe进程消失后的20秒内重新启动该进程
+        所以为了防止第二次检查，每隔0.5秒扫描并结束一次"RuntimeBroker.exe"
+        此操作可能会造成Microsoft无响应，在一次结束"RuntimeBroker.exe"时Microsoft会恢复响应*/
         private void Looking_for_RuntimeBroker(object source, System.Timers.ElapsedEventArgs e)
         {
-            //用于后台扫描并结束RuntimeBroker.exe
-            string result = related_functions.Associated_process_scan.process_scan();
-            if (result != "0")//在截取到结果后
+            string Return = related_functions.CMD.RunCmd("tasklist /APPS /FO CSV");
+            string[] Return_result = Return.Split('\n');
+            for (int i = 0; i < Return_result.Length; i++)
             {
-                //通过截取字符串的方法从数据中获得PID
-                string PID = related_functions.Intercept.Substring(result, "\",\"", "\",\"");
-                //使用taskkill命令结束获取到的PID进程
-                related_functions.CMD.RunCmd("taskkill /pid " + PID + " /f");
+                if (related_functions.Intercept.Substring(Return_result[i], "RuntimeBroker.exe", "Microsoft.MinecraftUWP") != "")
+                {   
+                    string PID = related_functions.Intercept.Substring(Return_result[i], "\",\"", "\",\"");
+                    related_functions.CMD.RunCmd("taskkill /pid " + PID + " /f");
+                }
             }
-
-            //用于检测游戏进程是否退出
-            if (!related_functions.CMD.RunCmd("tasklist").Contains("Minecraft.Windows.exe"))
-            {
-                Dispatcher.Invoke(new Action(delegate{ 关闭_Click(null, null); }));
-            }
+            if (!Return.Contains ("Microsoft.MinecraftUWP"))
+                Dispatcher.Invoke(new Action(delegate { 关闭_Click(null, null); }));
         }
 
-        //Microsoft启动时会使用RuntimeBroker.exe进程来通过ClipSVC服务来检测应用许可证状态
-        //此时ClipSVC的运行状态已经被破坏掉，ClipSVC将无法重新启动
-        //由于ClipSVC无法正常启动会造成RuntimeBroker一直处于等待状态，造成程序假死，游戏加载会卡到64%
-        //只要将与Microsoft关联的RuntimeBroker.exe进程结束掉即可恢复正常状态，稍后RuntimeBroker会重新启动
+        /*Microsoft启动时会使用RuntimeBroker.exe进程来通过ClipSVC服务来检测应用许可证状态
+        此时ClipSVC的运行状态已经被破坏掉，ClipSVC将无法重新启动
+        由于ClipSVC无法正常启动会造成RuntimeBroker一直处于等待状态，造成程序假死，游戏加载会卡到64%
+        只要将与Microsoft关联的RuntimeBroker.exe进程结束掉即可恢复正常状态，稍后RuntimeBroker会重新启动*/
         private void Looking_for_process(object source, System.Timers.ElapsedEventArgs e)
         {
-            string result = related_functions.Associated_process_scan.process_scan();
-            if (result != "0")//在截取到结果后
+            string Return = related_functions.CMD.RunCmd("tasklist /APPS /FO CSV");
+            string[] Return_result = Return.Split('\n');
+            for (int i = 0; i < Return_result.Length; i++)
             {
-                t1.Stop();//暂停计时器
-
-                //"RuntimeBroker.exe (runtimebroker07f4358a809ac99a64a67c1)","11680","21,608 K","Microsoft.MinecraftUWP_1.17.1004.0_x64__8wekyb3d8bbwe"
-                //获得数据后，从其中分离出PID，11680即为RuntimeBroker.exe的PID
-
-                //通过截取字符串的方法从数据中获得PID值
-                string PID = related_functions.Intercept.Substring(result, "\",\"", "\",\"");
-                //使用taskkill命令结束获取到的PID进程
-                related_functions.CMD.RunCmd("taskkill /pid " + PID + " /f");
-                //同步线程更新状态
-                Dispatcher.Invoke(new Action(delegate
-                {   
-                    日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: PID = " + related_functions.Intercept.Substring(result, "\",\"", "\",\"") + "\n";
-                    日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: 启动完成！！！\n";
-                    fyIcon.BalloonTipText = "启动完毕！";
-                    fyIcon.ShowBalloonTip(0);
-                    t1.Dispose();
-                    t1.Close();//释放计时器
-                    BeginStoryboard((Storyboard)FindResource("窗体关闭"));
-                }));
-                t2.Start();//启动计时器
-                beforDT = DateTime.Now;
-                Start_state = true;
+                if (related_functions.Intercept.Substring(Return_result[i], "RuntimeBroker.exe", "Microsoft.MinecraftUWP") != "")
+                {  
+                    string PID = related_functions.Intercept.Substring(Return_result[i], "\",\"", "\",\"");
+                    related_functions.CMD.RunCmd("taskkill /pid " + PID + " /f");
+                    Dispatcher.Invoke(new Action(delegate
+                    {
+                        日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: PID = " + related_functions.Intercept.Substring(Return_result[i], "\",\"", "\",\"") + "\n";
+                        日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: 启动完成！！！\n";
+                        fyIcon.BalloonTipText = "启动完毕！";
+                        fyIcon.ShowBalloonTip(0);
+                        t1.Dispose();
+                        t1.Close();
+                        BeginStoryboard((Storyboard)FindResource("窗体关闭"));
+                    }));
+                    t2.Start();
+                    beforDT = DateTime.Now;
+                    Start_state = true;
+                }
             }
         }
 
@@ -98,9 +91,9 @@ namespace Minecraft
         /// </summary>
         System.Timers.Timer t1 = new System.Timers.Timer(30000);
         /// <summary>
-        /// 初始化Timer类，用于定时扫描进程"RuntimeBroker.exe"并结束，单位间隔：0.5秒
+        /// 初始化Timer类，用于定时扫描进程"RuntimeBroker.exe"并结束，单位间隔：1秒
         /// </summary>
-        System.Timers.Timer t2 = new System.Timers.Timer(500);
+        System.Timers.Timer t2 = new System.Timers.Timer(1000);
         /// <summary>
         /// Windows10原生Toast通知
         /// </summary>
@@ -114,11 +107,13 @@ namespace Minecraft
         /// </summary>
         bool Start_state = false;
 
+
         private void OnNotifyIconDoubleClick(object sender, EventArgs e)
         {
             if (主窗体.Visibility ==  Visibility.Collapsed )
             { BeginStoryboard((Storyboard)FindResource("窗体打开")); }
-            else { BeginStoryboard((Storyboard)FindResource("窗体关闭")); }
+            else
+            { BeginStoryboard((Storyboard)FindResource("窗体关闭")); }
         }
 
         public MainWindow()
@@ -131,15 +126,26 @@ namespace Minecraft
             fyIcon.BalloonTipTitle = "温馨提示";
             fyIcon.DoubleClick += OnNotifyIconDoubleClick;
 
-            //以下代码用作校验程序签名是否完整，调试时请将其注释
-
-            if (related_functions.Fingerprint_verification.Document_verification() != true)
+            bool isAppRunning = false;
+            //设置一个名称为进程名的互斥体
+            Mutex mutex = new Mutex(true,Process.GetCurrentProcess().ProcessName, out isAppRunning);
+            if (!isAppRunning)
             {
-                fyIcon.BalloonTipText = "程序签名指纹校验失败！已关闭此程序";
+                fyIcon.BalloonTipText = "已经有一个实例程序正在运行\n双击托盘图标以打开程序...";
                 fyIcon.ShowBalloonTip(0);
                 fyIcon.Dispose();
                 Environment.Exit(0);
             }
+
+            //以下代码用作校验程序签名是否完整，调试时请将其注释
+
+            //if (related_functions.Fingerprint_verification.Document_verification() != true)
+            //{
+            //    fyIcon.BalloonTipText = "程序签名指纹校验失败！已关闭此程序";
+            //    fyIcon.ShowBalloonTip(0);
+            //    fyIcon.Dispose();
+            //    Environment.Exit(0);
+            //}
 
             //到处结束
 
@@ -154,10 +160,10 @@ namespace Minecraft
             t2.Enabled = false;//是否执行System.Timers.Timer.Elapsed事件
         }
 
-        //将内嵌入注册表文件释放到用户临时文件夹后执行导入
-        //此注册表是用来破坏ClipSVC服务的正常运行，此时ClipSVC服务将无法重新启动
-        //删除释放的文件后，提示用户启动游戏
-        //并启动计时器，来后台监测与Microsoft关联的RuntimeBroker进程
+        /*将内嵌入注册表文件释放到用户临时文件夹后执行导入
+        此注册表是用来破坏ClipSVC服务的正常运行，此时ClipSVC服务将无法重新启动
+        删除释放的文件后，提示用户启动游戏
+        并启动计时器，来后台监测与Microsoft关联的RuntimeBroker进程*/
         private void 启动_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -178,9 +184,15 @@ namespace Minecraft
                     日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: 写入注册表...\n";
                     //导入注册表
                     related_functions.Import_function.ExecuteReg(Environment.GetEnvironmentVariable("TMP") + @"\MC_ON.reg");
+
+                    日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: 禁用 AppXSvc 服务...\n";
+                    //禁用AppXSvc服务
+                    related_functions.CMD.RunCmd("net stop AppXSvc");
+
                     日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: 禁用 ClipSVC 服务...\n";
                     //禁用ClipSVC服务
                     related_functions.CMD.RunCmd("net stop ClipSVC");
+
                     日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: 删除临时文件...\n";
                     //删除临时文件
                     File.Delete(Environment.GetEnvironmentVariable("TMP") + @"\MC_ON.reg");
@@ -191,14 +203,16 @@ namespace Minecraft
                 }
                 else
                 {
+                    日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: 请先安装 MinecraftUWP\n";
                     fyIcon.BalloonTipText = "您似乎还没有安装 MinecraftUWP";
                     fyIcon.ShowBalloonTip(0);
                 }
             }
             catch (Exception ex)
             {
-                fyIcon.BalloonTipText = "程序启动时遇到异常!原因如下：\n" + ex.Message;
+                fyIcon.BalloonTipText = "程序启动时遇到异常!";
                 fyIcon.ShowBalloonTip(0);
+                System.Windows.MessageBox.Show(ex.ToString());
                 //删除通知栏图标
                 fyIcon.Dispose();
                 //关闭进程
@@ -209,12 +223,11 @@ namespace Minecraft
         //导入原注册表并恢复ClipSVC服务的正常运行
         private void 关闭_Click(object sender, RoutedEventArgs e)
         {
+            BeginStoryboard((Storyboard)FindResource("关闭程序"));
+            fyIcon.BalloonTipText = "请稍后...\n开始还原注册表和服务项...";
+            fyIcon.ShowBalloonTip(0);
             try
             {
-                主窗体.Visibility = Visibility.Collapsed;//隐藏主窗体
-                fyIcon.BalloonTipText = "请稍后...\n开始还原注册表和服务项...";
-                fyIcon.ShowBalloonTip(0);
-
                 byte[] byDll = Encoding.Default.GetBytes(Properties.Resources.MC_OFF);//获取嵌入文件的字节数组  
                 string strPath = Environment.GetEnvironmentVariable("TMP") + @"\MC_OFF.reg";//设置释放路径
                 using (FileStream fs = new FileStream(strPath, FileMode.Create))//开始写入文件流
@@ -224,6 +237,8 @@ namespace Minecraft
                 //恢复注册表
                 related_functions.Import_function.ExecuteReg(Environment.GetEnvironmentVariable("TMP") + @"\MC_OFF.reg");
                 Thread.Sleep(6000);//睡眠6秒
+                //恢复AppXSvc服务
+                related_functions.CMD.RunCmd("net start AppXSvc");
                 //恢复ClipSVC服务
                 related_functions.CMD.RunCmd("net start ClipSVC");
                 //删除临时文件
@@ -235,9 +250,9 @@ namespace Minecraft
                     TimeSpan ts = afterDT.Subtract(beforDT);
                     fyIcon.BalloonTipText = "还原完毕！已成功关闭程序！\n本次游戏时长：" + related_functions.Time_Calculate.formatLongToTimeStr(ts.TotalMilliseconds);
                 }
-                else//没有启动，仅启动了程序
+                else//没有启动游戏，仅启动了程序
                 {
-                    fyIcon.BalloonTipText = "还原完毕！已成功关闭程序！\n本次游戏时长：0小时 0分钟 0秒";
+                    fyIcon.BalloonTipText = "还原完毕！已成功关闭程序！";
                 }
 
                 fyIcon.ShowBalloonTip(0);
@@ -248,8 +263,9 @@ namespace Minecraft
             }
             catch (Exception ex)
             {
-                fyIcon.BalloonTipText = "程序关闭时遇到异常!原因如下：\n" + ex.Message;
+                fyIcon.BalloonTipText = "程序关闭时遇到异常!" ;
                 fyIcon.ShowBalloonTip(0);
+                System.Windows.MessageBox.Show(ex.ToString());
                 //删除通知栏图标
                 fyIcon.Dispose();
                 //关闭进程

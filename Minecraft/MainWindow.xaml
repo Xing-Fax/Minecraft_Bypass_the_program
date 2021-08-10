@@ -35,26 +35,37 @@
                 <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="{x:Static Visibility.Visible}"/>
             </ObjectAnimationUsingKeyFrames>
         </Storyboard>
+        <Storyboard x:Key="关闭程序">
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="主窗体">
+                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+            </ObjectAnimationUsingKeyFrames>
+        </Storyboard>
     </Window.Resources>
     <Grid Background="White" Clip="M0.5,5.5 C0.5,2.7385763 2.7385763,0.5 5.5,0.5 L289.5,0.5 C292.26142,0.5 294.5,2.7385763 294.5,5.5 L294.5,284.5 C294.5,287.26142 292.26142,289.5 289.5,289.5 L5.5,289.5 C2.7385763,289.5 0.5,287.26142 0.5,284.5 z">
         <Grid.RowDefinitions>
             <RowDefinition Height="290"/>
         </Grid.RowDefinitions>
         <Rectangle HorizontalAlignment="Left" Height="290" Stroke="Black" VerticalAlignment="Top" Width="295" RadiusX="5" RadiusY="5"/>
-        <Button x:Name="启动" Content="启动程序" HorizontalAlignment="Left" Height="35" Margin="10,25,0,0" VerticalAlignment="Top" Width="85" FontFamily="Microsoft YaHei UI" FontSize="14" Click="启动_Click"/>
-        <Button x:Name="关闭" Content="还原注册表" HorizontalAlignment="Left" Height="35" Margin="105,25,0,0" VerticalAlignment="Top" Width="85" FontFamily="Microsoft YaHei UI" FontSize="14" Click="关闭_Click"/>
-        <Button x:Name="最小化" Content="隐藏界面" HorizontalAlignment="Left" Height="35" Margin="200,25,0,0" VerticalAlignment="Top" Width="85" FontFamily="Microsoft YaHei UI" FontSize="14" Click="最小化_Click"/>
-        <Label Content="运行日志：" HorizontalAlignment="Left" Height="25" Margin="10,60,0,0" VerticalAlignment="Top" Width="80" FontFamily="Microsoft YaHei UI"/>
-        <ScrollViewer HorizontalAlignment="Left" Height="195" VerticalAlignment="Top" Width="275" Margin="10,85,0,0" HorizontalScrollBarVisibility="Auto" Padding="0">
-            <TextBox x:Name="日志" HorizontalAlignment="Left" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" FontFamily="Microsoft YaHei UI" MinWidth="258" MinHeight="195" BorderBrush="{x:Null}"/>
-        </ScrollViewer>
-        <Rectangle HorizontalAlignment="Left" Height="195" Margin="10,85,0,0" Stroke="#FF8F8F8F" VerticalAlignment="Top" Width="275"/>
-        <Label Content="Minecraft" HorizontalAlignment="Left" Height="22.75" Margin="5,0,0,0" VerticalAlignment="Top" Width="65" FontFamily="Microsoft YaHei UI"/>
-        <Label Content="Copyright © xcz  2021" HorizontalAlignment="Left" Height="25" Margin="145,60,0,0" VerticalAlignment="Top" Width="140" FontFamily="Microsoft YaHei UI" MouseUp="Label_MouseUp"/>
+        <Grid Margin="10,25,10,230">
+            <Button x:Name="启动" Content="启动程序" HorizontalAlignment="Left" Height="35" VerticalAlignment="Top" Width="85" FontFamily="Microsoft YaHei UI" FontSize="14" Click="启动_Click"/>
+            <Button x:Name="关闭" Content="还原注册表" HorizontalAlignment="Left" Height="35" Margin="95,0,0,0" VerticalAlignment="Top" Width="85" FontFamily="Microsoft YaHei UI" FontSize="14" Click="关闭_Click"/>
+            <Button x:Name="最小化" Content="隐藏界面" HorizontalAlignment="Left" Height="35" Margin="190,0,0,0" VerticalAlignment="Top" Width="85" FontFamily="Microsoft YaHei UI" FontSize="14" Click="最小化_Click"/>
+        </Grid>
+        <Canvas Margin="10,85,10,10">
+            <ScrollViewer HorizontalAlignment="Left" Height="195" VerticalAlignment="Top" Width="275" HorizontalScrollBarVisibility="Auto" Padding="0">
+                <TextBox x:Name="日志" HorizontalAlignment="Left" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" FontFamily="Microsoft YaHei UI" MinWidth="258" MinHeight="195" BorderBrush="{x:Null}"/>
+            </ScrollViewer>
+            <Rectangle HorizontalAlignment="Left" Height="195" Stroke="#FF8F8F8F" VerticalAlignment="Top" Width="275"/>
+        </Canvas>
+        <Canvas Margin="10,60,10,205">
+            <Label Content="运行日志：" HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="80" FontFamily="Microsoft YaHei UI"/>
+            <Label Content="Copyright © xcz  2021" HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="140" FontFamily="Microsoft YaHei UI" MouseUp="Label_MouseUp" Canvas.Left="135"/>
+        </Canvas>
         <Grid Margin="0,0,0,265" MouseMove="Grid_MouseMove">
             <Grid.Background>
                 <SolidColorBrush Color="Black" Opacity="0"/>
             </Grid.Background>
+            <Label Content="Minecraft" HorizontalAlignment="Left" Height="22.75" Margin="5,0,0,0" VerticalAlignment="Top" Width="65" FontFamily="Microsoft YaHei UI"/>
         </Grid>
     </Grid>
 </Window>
