@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Minecraft"
         mc:Ignorable="d"
-        Title="Minecraft start up" Height="290" Width="295" AllowsTransparency="True" WindowStyle="None" Background="{x:Null}" Topmost="True" Icon="256x256.ico" SnapsToDevicePixels="True" ShowInTaskbar="False">
+        Title="Minecraft Start Up" Height="290" Width="295" AllowsTransparency="True" WindowStyle="None" Background="{x:Null}" Topmost="True" Icon="256x256.ico" SnapsToDevicePixels="True" ShowInTaskbar="False">
     <Window.Resources>
         <Storyboard x:Key="窗体关闭">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="主窗体">

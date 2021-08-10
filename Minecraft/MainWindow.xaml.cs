@@ -139,13 +139,13 @@ namespace Minecraft
 
             //以下代码用作校验程序签名是否完整，调试时请将其注释
 
-            //if (related_functions.Fingerprint_verification.Document_verification() != true)
-            //{
-            //    fyIcon.BalloonTipText = "程序签名指纹校验失败！已关闭此程序";
-            //    fyIcon.ShowBalloonTip(0);
-            //    fyIcon.Dispose();
-            //    Environment.Exit(0);
-            //}
+            if (related_functions.Fingerprint_verification.Document_verification() != true)
+            {
+                fyIcon.BalloonTipText = "程序签名指纹校验失败！已关闭此程序";
+                fyIcon.ShowBalloonTip(0);
+                fyIcon.Dispose();
+                Environment.Exit(0);
+            }
 
             //到处结束
 
