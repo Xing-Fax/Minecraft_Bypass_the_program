@@ -53,7 +53,7 @@
         </Grid>
         <Canvas Margin="10,85,10,10">
             <ScrollViewer HorizontalAlignment="Left" Height="195" VerticalAlignment="Top" Width="275" HorizontalScrollBarVisibility="Auto" Padding="0">
-                <TextBox x:Name="日志" HorizontalAlignment="Left" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" FontFamily="Microsoft YaHei UI" MinWidth="258" MinHeight="195" BorderBrush="{x:Null}"/>
+                <TextBox x:Name="日志" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Microsoft YaHei UI" MinWidth="258" MinHeight="195" BorderBrush="{x:Null}"/>
             </ScrollViewer>
             <Rectangle HorizontalAlignment="Left" Height="195" Stroke="#FF8F8F8F" VerticalAlignment="Top" Width="275"/>
         </Canvas>
