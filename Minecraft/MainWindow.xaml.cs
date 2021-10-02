@@ -130,39 +130,6 @@ namespace Minecraft
             fyIcon.BalloonTipTitle = "温馨提示";
             fyIcon.DoubleClick += OnNotifyIconDoubleClick;
 
-
-            //string a = @"C:\Program Files (x86)\IObit\IObit Unlocker\IObitUnlocker.exe";
-
-            //Process p = new Process();
-            //p.StartInfo.FileName = @"C:\Program Files (x86)\IObit\IObit Unlocker\IObitUnlocker.exe";
-            //p.StartInfo.Arguments = @"/Delete E:\新建文本文档(3).txt";
-            //p.StartInfo.UseShellExecute = false;      //Shell的使用
-            //p.StartInfo.RedirectStandardInput = true;  //重定向输入
-            //p.StartInfo.RedirectStandardOutput = true; //重定向输出
-            //p.StartInfo.RedirectStandardError = true;  //重定向输出错误
-            //p.StartInfo.CreateNoWindow = true;        //设置置不显示示窗口
-            //p.Start();
-
-
-            //related_functions.CMD.RunCmd("taskkill /IM IObitUnlocker.exe");
-            //return p.StandardOutput.ReadToEnd();      //输出出流取得命令行结果果
-
-
-
-
-            //string b = @"E:\新建文本文档(3).txt";
-
-            //related_functions.CMD.RunCmd("cmd" +  " /c " +  "\"" + a + "\"" +  " /Delete "  + "\"" + b + "\"" + " /Nurmal");
-
-            //System.Windows.MessageBox.Show("\"C:\\Program Files(x86)\\IObit\\IObit Unlocker\\IObitUnlocker.exe\" /Delete E:\\新建文本文档(3).txt /Nurmal");
-
-
-
-
-
-
-
-
             bool isAppRunning = false;
             Mutex mutex = new Mutex(true,Process.GetCurrentProcess().ProcessName, out isAppRunning);
             if (!isAppRunning)
