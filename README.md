@@ -5,6 +5,7 @@
 ### 请支持正版！
 
 www.Minecraft.net
+
 一次购买终身享受 请务必支持正版!!!
 
 另一种绕过验证方法请参见 https://github.com/xingchuanzhen/Minecraft-Unlock
