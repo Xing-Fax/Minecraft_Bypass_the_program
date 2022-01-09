@@ -13,6 +13,10 @@ namespace Minecraft
     /// </summary>
     public partial class App : Application
     {
-
+        public static string[] com_line_args;
+        private void Application_Startup(object sender, StartupEventArgs e)
+        {
+            com_line_args = e.Args;
+        }
     }
 }

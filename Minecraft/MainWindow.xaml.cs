@@ -30,11 +30,42 @@ namespace Minecraft
     /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// 用于结束RuntimeBroker
+        /// </summary>
         System.Timers.Timer t1 = new System.Timers.Timer(30000);
+        /// <summary>
+        /// 用于后台定时结束RuntimeBroker并监测游戏是否关闭
+        /// </summary>
         System.Timers.Timer t2 = new System.Timers.Timer(1000);
+        /// <summary>
+        /// 任务栏通知
+        /// </summary>
         NotifyIcon fyIcon = new NotifyIcon();
+        /// <summary>
+        /// 记录游戏时间
+        /// </summary>
         DateTime beforDT;
+        /// <summary>
+        /// 决定是否启动成功
+        /// </summary>
         bool Start_state = false;
+        /// <summary>
+        /// 决定是否显示图形化界面
+        /// </summary>
+        bool Graphic_Interface = true;
+        /// <summary>
+        /// 决定是否显示任务栏通知
+        /// </summary>
+        bool Notice = true;
+        /// <summary>
+        /// 是否立即执行
+        /// </summary>
+        bool Immediately = false;
+        /// <summary>
+        /// 是否执行还原
+        /// </summary>
+        bool Reduction = false;
 
         private void Grid_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
@@ -51,12 +82,21 @@ namespace Minecraft
             Process.Start("https://github.com/xingchuanzhen/Minecraft_Bypass_the_program");
         }
 
+        /// <summary>
+        /// 同步线程并显示通知
+        /// </summary>
+        /// <param name="str">通知内容</param>
+        /// <param name="Icon">决定是否退出程序</param>
         private void Notify_NotifyIcon(string str, bool Icon)
         {
             Dispatcher.Invoke(new Action(delegate
             {
-                fyIcon.BalloonTipText = str;
-                fyIcon.ShowBalloonTip(0);
+                //是否显示通知
+                if (Notice == true)
+                {
+                    fyIcon.BalloonTipText = str;
+                    fyIcon.ShowBalloonTip(0);
+                }
                 if (Icon == true)
                 {
                     fyIcon.Dispose();
@@ -65,64 +105,102 @@ namespace Minecraft
             }));
         }
 
+        /// <summary>
+        /// 打印日志
+        /// </summary>
+        /// <param name="str">日志内容</param>
         private void Log_Write(string str)
         {
             Dispatcher.Invoke(new Action(delegate{ 日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: " + str + "\n"; }));
         }
 
-        private void Looking_for_RuntimeBroker(object source, System.Timers.ElapsedEventArgs e)
+        /// <summary>
+        /// 得到与Minecraft相关联的RuntimeBroker的PID
+        /// </summary>
+        /// <returns>得到的PID</returns>
+        private string GET_PID()
         {
             string Return = related_functions.CMD.RunCmd("tasklist /APPS /FO CSV");
             string[] Return_result = Return.Split('\n');
             for (int i = 0; i < Return_result.Length; i++)
             {
                 if (related_functions.Intercept.Substring(Return_result[i], "RuntimeBroker.exe", "Microsoft.MinecraftUWP") != "")
-                {   
-                    string PID = related_functions.Intercept.Substring(Return_result[i], "\",\"", "\",\"");
-                    related_functions.CMD.RunCmd("taskkill /pid " + PID + " /f");
-                }
+                    return related_functions.Intercept.Substring(Return_result[i], "\",\"", "\",\"");
             }
-            if (!Return.Contains ("Microsoft.MinecraftUWP"))
-            {
-                Dispatcher.Invoke(new Action(delegate { t2.Stop(); }));
+            return null;
+        }
+
+        private void Looking_for_RuntimeBroker(object source, System.Timers.ElapsedEventArgs e)
+        {
+            string PID = GET_PID();
+            if(PID != null)
+                related_functions.CMD.RunCmd("taskkill /pid " + PID + " /f");
+
+            if (!related_functions.CMD.RunCmd("tasklist /APPS /FO CSV").Contains("Microsoft.MinecraftUWP"))
                 Dispatcher.Invoke(new Action(delegate { 关闭_Click(null, null); }));
-            }
         }
 
         private void Looking_for_process(object source, System.Timers.ElapsedEventArgs e)
         {
-            string Return = related_functions.CMD.RunCmd("tasklist /APPS /FO CSV");
-            string[] Return_result = Return.Split('\n');
-            for (int i = 0; i < Return_result.Length; i++)
+            string PID = GET_PID();
+            if (PID != null)
             {
-                if (related_functions.Intercept.Substring(Return_result[i], "RuntimeBroker.exe", "Microsoft.MinecraftUWP") != "")
-                {  
-                    string PID = related_functions.Intercept.Substring(Return_result[i], "\",\"", "\",\"");
-                    related_functions.CMD.RunCmd("taskkill /pid " + PID + " /f");
-
-                    Log_Write("PID = " + related_functions.Intercept.Substring(Return_result[i], "\",\"", "\",\""));
-                    Log_Write("启动完成！！！");
-                    Notify_NotifyIcon("启动完毕！", false);
-                    Dispatcher.Invoke(new Action(delegate { BeginStoryboard((Storyboard)FindResource("窗体关闭")); }));
-                    t1.Dispose();
-                    Dispatcher.Invoke(new Action(delegate { t2.Start(); }));
-                    beforDT = DateTime.Now;
-                    Start_state = true;
-                }
+                related_functions.CMD.RunCmd("taskkill /pid " + PID + " /f");
+                Log_Write("PID = " + PID);
+                Log_Write("启动完成！！！");
+                Notify_NotifyIcon("启动完毕！", false);
+                Dispatcher.Invoke(new Action(delegate { BeginStoryboard((Storyboard)FindResource("窗体关闭")); }));
+                t1.Dispose();
+                Dispatcher.Invoke(new Action(delegate { t2.Start(); }));
+                beforDT = DateTime.Now;
+                Start_state = true;
             }
         }
 
         private void OnNotifyIconDoubleClick(object sender, EventArgs e)
         {
-            if (主窗体.Visibility ==  Visibility.Collapsed )
+            if (主窗体.Visibility ==  Visibility.Collapsed)
             { BeginStoryboard((Storyboard)FindResource("窗体打开")); }
             else
             { BeginStoryboard((Storyboard)FindResource("窗体关闭")); }
         }
 
+        /// <summary>
+        /// 初始化命令行参数
+        /// </summary>
+        /// <param name="Args">参数内容</param>
+        private void initialization(string[] Args)
+        {
+            for(int i = 0; i < Args .Length;i ++)
+            {
+                if(Args[i] == "Implement")
+                    Immediately = true;
+
+                if (Args[i] == "Reduction")
+                    Reduction = true;
+
+                if (Args[i] == "Notify_NO")
+                    Notice = false;
+
+                if (Args[i] == "Interface_NO")
+                    Graphic_Interface = false;
+            }
+        }
+
         public MainWindow()
         {
+            initialization(App.com_line_args);
+
             InitializeComponent();
+
+            if (Graphic_Interface == false)
+                BeginStoryboard((Storyboard)FindResource("关闭程序"));
+
+            if (Immediately == true)
+                启动_Click(null, null);
+
+            if (Reduction == true)
+                关闭_Click(null, null);
 
             fyIcon.Icon = Properties.Resources.图标;
             fyIcon.Visible = true;
@@ -130,13 +208,8 @@ namespace Minecraft
             fyIcon.BalloonTipTitle = "温馨提示";
             fyIcon.DoubleClick += OnNotifyIconDoubleClick;
 
-            bool isAppRunning = false;
-            Mutex mutex = new Mutex(true,Process.GetCurrentProcess().ProcessName, out isAppRunning);
-            if (!isAppRunning)
-                Notify_NotifyIcon("已经有一个实例程序正在运行\n双击托盘图标以打开程序...", true);
-
-            if (related_functions.Fingerprint_verification.Document_verification() != true)
-                Notify_NotifyIcon("程序签名指纹校验失败！已关闭此程序!", true);
+            //if (related_functions.Fingerprint_verification.Document_verification() != true)
+            //    Notify_NotifyIcon("程序签名指纹校验失败！已关闭此程序!", true);
 
             Log_Write("程序启动...");
             t1.Elapsed += new System.Timers.ElapsedEventHandler(Looking_for_process) ;
@@ -196,12 +269,11 @@ namespace Minecraft
             {
                 fs.Write(byDll, 0, byDll.Length);
             }
-
             related_functions.Import_function.ExecuteReg(Environment.GetEnvironmentVariable("TMP") + @"\MC_OFF.reg");
-            Thread.Sleep(6000);
+            File.Delete(Environment.GetEnvironmentVariable("TMP") + @"\MC_OFF.reg");
+            Thread.Sleep(10000);
             related_functions.CMD.RunCmd("net start AppXSvc");
             related_functions.CMD.RunCmd("net start ClipSVC");
-            File.Delete(Environment.GetEnvironmentVariable("TMP") + @"\MC_OFF.reg");
             if (Start_state == true)
             {
                 DateTime afterDT = DateTime.Now;
@@ -213,6 +285,7 @@ namespace Minecraft
 
         private void 关闭_Click(object sender, RoutedEventArgs e)
         {
+            t2.Dispose();
             BeginStoryboard((Storyboard)FindResource("关闭程序"));
             Notify_NotifyIcon("请稍后...\n开始还原注册表和服务项...", false);
             using (BackgroundWorker bw = new BackgroundWorker())
