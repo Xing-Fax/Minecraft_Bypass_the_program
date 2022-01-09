@@ -1,14 +1,23 @@
 # Minecraft for Windows 10 Bypass the program
 绕过Minecraft for Windows 10我的世界UWP验证系统
 
+
+### 请支持正版！
+
+www.Minecraft.net
+
+一次购买终身享受 请务必支持正版!!!
+
+另一种绕过验证方法请参见 https://github.com/xingchuanzhen/Minecraft-Unlock
+
 ### 介绍
 
 
-傻瓜式一键操作，自动导入注册表
+傻瓜式一键操作，全自动化执行程序
 
 自动起调MinecraftUWP，自动结束RuntimeBroker.exe
 
-不会玩一会就显示“解锁完整游戏”亲测可玩8小时以上
+游戏30分钟左右不会出现“解锁完整游戏”
 
 游戏关闭后自动还原注册表，启动服务项
 
