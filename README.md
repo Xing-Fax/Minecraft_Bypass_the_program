@@ -54,6 +54,8 @@ www.Minecraft.net
          
          Reduction   Interface_NO 
 
+注意：Releases版本并不支持命令行调用，请克隆源码后自行编译使用
+
 ### 软件执行流程(单击“启动程序后”)：
 
  1.开始释放内嵌入注册表文件到用户临时文件夹
