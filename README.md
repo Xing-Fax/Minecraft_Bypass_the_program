@@ -48,7 +48,7 @@ www.Minecraft.net
          Notify_NO		隐藏任务栏通知
 
          <可选>
-         Interface_NO		隐藏图形化界面
+         Interface_NO隐藏图形化界面
          
          示例：
          
