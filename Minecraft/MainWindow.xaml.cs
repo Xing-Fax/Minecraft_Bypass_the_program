@@ -24,7 +24,6 @@ using System.ComponentModel;
 
 namespace Minecraft
 {
-
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
@@ -82,6 +81,23 @@ namespace Minecraft
             Process.Start("https://github.com/xingchuanzhen/Minecraft_Bypass_the_program");
         }
 
+        private void OnNotifyIconDoubleClick(object sender, EventArgs e)
+        {
+            if (主窗体.Visibility == Visibility.Collapsed)
+            { BeginStoryboard((Storyboard)FindResource("窗体打开")); }
+            else
+            { BeginStoryboard((Storyboard)FindResource("窗体关闭")); }
+        }
+
+        /// <summary>
+        /// 打印日志
+        /// </summary>
+        /// <param name="str">日志内容</param>
+        private void Log_Write(string str)
+        {
+            Dispatcher.Invoke(new Action(delegate { 日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: " + str + "\n"; }));
+        }
+
         /// <summary>
         /// 同步线程并显示通知
         /// </summary>
@@ -106,15 +122,6 @@ namespace Minecraft
         }
 
         /// <summary>
-        /// 打印日志
-        /// </summary>
-        /// <param name="str">日志内容</param>
-        private void Log_Write(string str)
-        {
-            Dispatcher.Invoke(new Action(delegate{ 日志.Text += "[" + DateTime.Now.ToLongTimeString().ToString() + "]: " + str + "\n"; }));
-        }
-
-        /// <summary>
         /// 得到与Minecraft相关联的RuntimeBroker的PID
         /// </summary>
         /// <returns>得到的PID</returns>
@@ -123,46 +130,43 @@ namespace Minecraft
             string Return = related_functions.CMD.RunCmd("tasklist /APPS /FO CSV");
             string[] Return_result = Return.Split('\n');
             for (int i = 0; i < Return_result.Length; i++)
-            {
                 if (related_functions.Intercept.Substring(Return_result[i], "RuntimeBroker.exe", "Microsoft.MinecraftUWP") != "")
                     return related_functions.Intercept.Substring(Return_result[i], "\",\"", "\",\"");
-            }
             return null;
         }
 
+        /// <summary>
+        /// 后台循环监测RuntimeBroker并结束
+        /// 同时监测游戏是否退出
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="e"></param>
         private void Looking_for_RuntimeBroker(object source, System.Timers.ElapsedEventArgs e)
         {
             string PID = GET_PID();
             if(PID != null)
                 related_functions.CMD.RunCmd("taskkill /pid " + PID + " /f");
-
             if (!related_functions.CMD.RunCmd("tasklist /APPS /FO CSV").Contains("Microsoft.MinecraftUWP"))
                 Dispatcher.Invoke(new Action(delegate { 关闭_Click(null, null); }));
         }
 
+        /// <summary>
+        /// 结束RuntimeBroker并完成程序初始化
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="e"></param>
         private void Looking_for_process(object source, System.Timers.ElapsedEventArgs e)
         {
             string PID = GET_PID();
             if (PID != null)
             {
                 related_functions.CMD.RunCmd("taskkill /pid " + PID + " /f");
-                Log_Write("PID = " + PID);
-                Log_Write("启动完成！！！");
-                Notify_NotifyIcon("启动完毕！", false);
+                Log_Write("PID = " + PID); Log_Write("启动完成！！！");
+                Notify_NotifyIcon("启动完毕！", false); t1.Dispose();
                 Dispatcher.Invoke(new Action(delegate { BeginStoryboard((Storyboard)FindResource("窗体关闭")); }));
-                t1.Dispose();
                 Dispatcher.Invoke(new Action(delegate { t2.Start(); }));
-                beforDT = DateTime.Now;
-                Start_state = true;
+                beforDT = DateTime.Now; Start_state = true;
             }
-        }
-
-        private void OnNotifyIconDoubleClick(object sender, EventArgs e)
-        {
-            if (主窗体.Visibility ==  Visibility.Collapsed)
-            { BeginStoryboard((Storyboard)FindResource("窗体打开")); }
-            else
-            { BeginStoryboard((Storyboard)FindResource("窗体关闭")); }
         }
 
         /// <summary>
@@ -196,17 +200,24 @@ namespace Minecraft
             if (Graphic_Interface == false)
                 BeginStoryboard((Storyboard)FindResource("关闭程序"));
 
-            if (Immediately == true)
-                启动_Click(null, null);
+            if(Immediately && Reduction)
+            {
+                Environment.Exit(0);
+            }
+            else
+            {
+                if (Immediately == true)
+                    启动_Click(null, null);
 
-            if (Reduction == true)
-                关闭_Click(null, null);
+                if (Reduction == true)
+                    关闭_Click(null, null);
+            }
 
             fyIcon.Icon = Properties.Resources.图标;
             fyIcon.Visible = true;
             fyIcon.Text = "正常运行";
             fyIcon.BalloonTipTitle = "温馨提示";
-            fyIcon.DoubleClick += OnNotifyIconDoubleClick;
+            fyIcon.Click += OnNotifyIconDoubleClick;
 
             //if (related_functions.Fingerprint_verification.Document_verification() != true)
             //    Notify_NotifyIcon("程序签名指纹校验失败！已关闭此程序!", true);
@@ -243,24 +254,6 @@ namespace Minecraft
             t1.Start();
         }
 
-        private void 启动_Click(object sender, RoutedEventArgs e)
-        {
-            string UWP = related_functions.CMD.RunCmd(@"CD C:\Program Files\WindowsApps & C: & DIR");
-            if (UWP.Contains("Microsoft.MinecraftUWP"))
-            {
-                using (BackgroundWorker bw = new BackgroundWorker())
-                {
-                    bw.DoWork += new DoWorkEventHandler(Start_in_the_background);
-                    bw.RunWorkerAsync();
-                }
-            }
-            else
-            {
-                Log_Write("请先安装 MinecraftUWP!");
-                Notify_NotifyIcon("您似乎还没有安装 MinecraftUWP!", false);
-            }
-        }
-
         void Closure_in_the_background(object sender, DoWorkEventArgs e)
         {
             byte[] byDll = Encoding.Default.GetBytes(Properties.Resources.MC_OFF);
@@ -281,6 +274,24 @@ namespace Minecraft
                 Notify_NotifyIcon("还原完毕！已成功关闭程序！\n本次游戏时长：" + related_functions.Time_Calculate.formatLongToTimeStr(ts.TotalMilliseconds), true);
             }
             else { Notify_NotifyIcon("还原完毕！已成功关闭程序！", true); }
+        }
+
+        private void 启动_Click(object sender, RoutedEventArgs e)
+        {
+            string UWP = related_functions.CMD.RunCmd(@"CD C:\Program Files\WindowsApps & C: & DIR");
+            if (UWP.Contains("Microsoft.MinecraftUWP"))
+            {
+                using (BackgroundWorker bw = new BackgroundWorker())
+                {
+                    bw.DoWork += new DoWorkEventHandler(Start_in_the_background);
+                    bw.RunWorkerAsync();
+                }
+            }
+            else
+            {
+                Log_Write("请先安装 MinecraftUWP!");
+                Notify_NotifyIcon("您似乎还没有安装 MinecraftUWP!", false);
+            }
         }
 
         private void 关闭_Click(object sender, RoutedEventArgs e)

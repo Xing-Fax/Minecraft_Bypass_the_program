@@ -48,7 +48,7 @@
         <Rectangle HorizontalAlignment="Left" Height="290" Stroke="Black" VerticalAlignment="Top" Width="295" RadiusX="5" RadiusY="5"/>
         <Grid Margin="10,25,10,230">
             <Button x:Name="启动" Content="启动程序" HorizontalAlignment="Left" Height="35" VerticalAlignment="Top" Width="85" FontFamily="Microsoft YaHei UI" FontSize="14" Click="启动_Click"/>
-            <Button x:Name="关闭" Content="关闭并还原" HorizontalAlignment="Left" Height="35" Margin="95,0,0,0" VerticalAlignment="Top" Width="85" FontFamily="Microsoft YaHei UI" FontSize="14" Click="关闭_Click"/>
+            <Button x:Name="关闭" Content="关闭&amp;还原" HorizontalAlignment="Left" Height="35" Margin="95,0,0,0" VerticalAlignment="Top" Width="85" FontFamily="Microsoft YaHei UI" FontSize="14" Click="关闭_Click"/>
             <Button x:Name="最小化" Content="隐藏界面" HorizontalAlignment="Left" Height="35" Margin="190,0,0,0" VerticalAlignment="Top" Width="85" FontFamily="Microsoft YaHei UI" FontSize="14" Click="最小化_Click"/>
         </Grid>
         <Canvas Margin="10,85,10,10">
