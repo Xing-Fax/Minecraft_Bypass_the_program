@@ -68,13 +68,13 @@ www.Minecraft.net
 
  5.通过Process的Start方法调起 MinecraftUWP
 
- 6.后台等待28秒后开始使用Tasklist命令显示Microsoft Store 应用及其关联的进程
+ 6.后台等待30秒后开始使用Tasklist命令显示Microsoft Store 应用及其关联的进程
 
  7.开始扫描MinecraftUWP关联的RuntimeBroker进程PID
 
  8.获取到PID后使用Tasklist命令强制结束进程，此时游戏启动完毕
 
- 9.启动后台每隔10秒自动扫描与Minecraft相关联的RuntimeBroker进程并结束
+ 9.启动后台每隔1秒自动扫描与Minecraft相关联的RuntimeBroker进程并结束
 
  10.同时检测Minecraf进程是否退出，绕过退出程序自动关闭，同时还原注册表和服务项
 
