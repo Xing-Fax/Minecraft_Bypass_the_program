@@ -36,13 +36,23 @@ www.Minecraft.net
  
  ### 命令行调用格式
  
-         1.打开“Minecraft Unlock.exe”程序
+         [Implement   |   Reduction]   <Notify_NO>  <Interface_NO>
 
-         2.单击“开始执行”按钮
+         命令解释：
 
-         3.等待日志出现“复制完毕”关闭程序
+         [必须]
+         Implement		启动并执行程序
+         Reduction		启动程序并执行还原操作
 
-         4.打开“Minecraft for Windows10”
+         <可选>
+         Notify_NO		隐藏任务栏通知
+
+         <可选>
+         Interface_NO		隐藏图形化界面
+         
+         示例：
+         
+         Reduction   Interface_NO 
 
 ### 软件执行流程(单击“启动程序后”)：
 
