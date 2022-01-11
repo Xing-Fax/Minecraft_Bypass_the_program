@@ -42,7 +42,7 @@ www.Minecraft.net
 
          [必须]
          Implement		启动并执行程序
-         Reduction		启动程序并执行还原操作
+         Reduction		启动并执行还原
 
          <可选>
          Notify_NO		隐藏任务栏通知
