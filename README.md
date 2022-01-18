@@ -8,7 +8,7 @@ www.Minecraft.net
 
 一次购买终身享受 请务必支持正版!!!
 
-通过替换DLL实现绕过参见 https://github.com/xingchuanzhen/Minecraft-Unlock
+通过替换DLL实现绕过参见： https://github.com/xingchuanzhen/Minecraft-Unlock
 
 通过禁用服务实现绕过参见：https://github.com/xingchuanzhen
 
