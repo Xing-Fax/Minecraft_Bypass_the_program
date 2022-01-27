@@ -10,7 +10,7 @@ www.Minecraft.net
 
 通过替换DLL实现绕过参见： https://github.com/xingchuanzhen/Minecraft-Unlock
 
-通过禁用服务实现绕过参见：https://github.com/xingchuanzhen
+通过禁用服务实现绕过参见：https://github.com/xingchuanzhen/Minecraft_Bypass_the_program
 
 通过修改内存实现绕过参见：https://github.com/xingchuanzhen/Minecraft_Memory_Bypass
 
